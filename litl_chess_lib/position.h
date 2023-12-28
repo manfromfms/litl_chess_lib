@@ -3,16 +3,20 @@
 #define ull unsigned long long
 
 #include "useful_ull.h"
+#include "move.h"
 
 #include <vector>
 
 #include <string>
 using std::string;
 
+#include <iostream>
+
 namespace litl {
 	class position
 	{
 	public:
+		// All bitboards
 		ull wp = 0;
 		ull bp = 0;
 		ull wb = 0;
@@ -26,408 +30,12 @@ namespace litl {
 		ull wk = 0;
 		ull bk = 0;
 
-		ull knightMoves[64] = {
-			9077567998918656,
-			4679521487814656,
-			38368557762871296,
-			19184278881435648,
-			9592139440717824,
-			4796069720358912,
-			2257297371824128,
-			1128098930098176,
-			2305878468463689728,
-			1152939783987658752,
-			9799982666336960512,
-			4899991333168480256,
-			2449995666584240128,
-			1224997833292120064,
-			576469569871282176,
-			288234782788157440,
-			4620693356194824192,
-			11533718717099671552,
-			5802888705324613632,
-			2901444352662306816,
-			1450722176331153408,
-			725361088165576704,
-			362539804446949376,
-			145241105196122112,
-			18049583422636032,
-			45053588738670592,
-			22667534005174272,
-			11333767002587136,
-			5666883501293568,
-			2833441750646784,
-			1416171111120896,
-			567348067172352,
-			70506185244672,
-			175990581010432,
-			88545054707712,
-			44272527353856,
-			22136263676928,
-			11068131838464,
-			5531918402816,
-			2216203387392,
-			275414786112,
-			687463207072,
-			345879119952,
-			172939559976,
-			86469779988,
-			43234889994,
-			21609056261,
-			8657044482,
-			1075839008,
-			2685403152,
-			1351090312,
-			675545156,
-			337772578,
-			168886289,
-			84410376,
-			33816580,
-			4202496,
-			10489856,
-			5277696,
-			2638848,
-			1319424,
-			659712,
-			329728,
-			132096
-		};
-
-		ull kingMoves[64] = {
-			4665729213955833856,
-			11592265440851656704,
-			5796132720425828352,
-			2898066360212914176,
-			1449033180106457088,
-			724516590053228544,
-			362258295026614272,
-			144959613005987840,
-			13853283560024178688,
-			16186183351374184448,
-			8093091675687092224,
-			4046545837843546112,
-			2023272918921773056,
-			1011636459460886528,
-			505818229730443264,
-			216739030602088448,
-			54114388906344448,
-			63227278716305408,
-			31613639358152704,
-			15806819679076352,
-			7903409839538176,
-			3951704919769088,
-			1975852459884544,
-			846636838289408,
-			211384331665408,
-			246981557485568,
-			123490778742784,
-			61745389371392,
-			30872694685696,
-			15436347342848,
-			7718173671424,
-			3307175149568,
-			825720045568,
-			964771708928,
-			482385854464,
-			241192927232,
-			120596463616,
-			60298231808,
-			30149115904,
-			12918652928,
-			3225468928,
-			3768639488,
-			1884319744,
-			942159872,
-			471079936,
-			235539968,
-			117769984,
-			50463488,
-			12599488,
-			14721248,
-			7360624,
-			3680312,
-			1840156,
-			920078,
-			460039,
-			197123,
-			49216,
-			57504,
-			28752,
-			14376,
-			7188,
-			3594,
-			1797,
-			770
-		};
-
-		ull wpMoves[64] = {
-			0,
-			0,
-			0,
-			0,
-			0,
-			0,
-			0,
-			0,
-			9223372036854775808,
-			4611686018427387904,
-			2305843009213693952,
-			1152921504606846976,
-			576460752303423488,
-			288230376151711744,
-			144115188075855872,
-			72057594037927936,
-			36028797018963968,
-			18014398509481984,
-			9007199254740992,
-			4503599627370496,
-			2251799813685248,
-			1125899906842624,
-			562949953421312,
-			281474976710656,
-			140737488355328,
-			70368744177664,
-			35184372088832,
-			17592186044416,
-			8796093022208,
-			4398046511104,
-			2199023255552,
-			1099511627776,
-			549755813888,
-			274877906944,
-			137438953472,
-			68719476736,
-			34359738368,
-			17179869184,
-			8589934592,
-			4294967296,
-			2147483648,
-			1073741824,
-			536870912,
-			268435456,
-			134217728,
-			67108864,
-			33554432,
-			16777216,
-			2155872256,
-			1077936128,
-			538968064,
-			269484032,
-			134742016,
-			67371008,
-			33685504,
-			16842752,
-			32768,
-			16384,
-			8192,
-			4096,
-			2048,
-			1024,
-			512,
-			256
-		};
-
-		ull bpMoves[64] = {
-			36028797018963968,
-			18014398509481984,
-			9007199254740992,
-			4503599627370496,
-			2251799813685248,
-			1125899906842624,
-			562949953421312,
-			281474976710656,
-			141287244169216,
-			70643622084608,
-			35321811042304,
-			17660905521152,
-			8830452760576,
-			4415226380288,
-			2207613190144,
-			1103806595072,
-			549755813888,
-			274877906944,
-			137438953472,
-			68719476736,
-			34359738368,
-			17179869184,
-			8589934592,
-			4294967296,
-			2147483648,
-			1073741824,
-			536870912,
-			268435456,
-			134217728,
-			67108864,
-			33554432,
-			16777216,
-			8388608,
-			4194304,
-			2097152,
-			1048576,
-			524288,
-			262144,
-			131072,
-			65536,
-			32768,
-			16384,
-			8192,
-			4096,
-			2048,
-			1024,
-			512,
-			256,
-			128,
-			64,
-			32,
-			16,
-			8,
-			4,
-			2,
-			1,
-			0,
-			0,
-			0,
-			0,
-			0,
-			0,
-			0,
-			0
-		};
-
-		ull wpCaptures[64] = {
-			0,
-			0,
-			0,
-			0,
-			0,
-			0,
-			0,
-			0,
-			4611686018427387904,
-			11529215046068469760,
-			5764607523034234880,
-			2882303761517117440,
-			1441151880758558720,
-			720575940379279360,
-			360287970189639680,
-			144115188075855872,
-			18014398509481984,
-			45035996273704960,
-			22517998136852480,
-			11258999068426240,
-			5629499534213120,
-			2814749767106560,
-			1407374883553280,
-			562949953421312,
-			70368744177664,
-			175921860444160,
-			87960930222080,
-			43980465111040,
-			21990232555520,
-			10995116277760,
-			5497558138880,
-			2199023255552,
-			274877906944,
-			687194767360,
-			343597383680,
-			171798691840,
-			85899345920,
-			42949672960,
-			21474836480,
-			8589934592,
-			1073741824,
-			2684354560,
-			1342177280,
-			671088640,
-			335544320,
-			167772160,
-			83886080,
-			33554432,
-			4194304,
-			10485760,
-			5242880,
-			2621440,
-			1310720,
-			655360,
-			327680,
-			131072,
-			16384,
-			40960,
-			20480,
-			10240,
-			5120,
-			2560,
-			1280,
-			512
-		};
-
-		ull bpCaptures[64] = {
-			18014398509481984,
-			45035996273704960,
-			22517998136852480,
-			11258999068426240,
-			5629499534213120,
-			2814749767106560,
-			1407374883553280,
-			562949953421312,
-			70368744177664,
-			175921860444160,
-			87960930222080,
-			43980465111040,
-			21990232555520,
-			10995116277760,
-			5497558138880,
-			2199023255552,
-			274877906944,
-			687194767360,
-			343597383680,
-			171798691840,
-			85899345920,
-			42949672960,
-			21474836480,
-			8589934592,
-			1073741824,
-			2684354560,
-			1342177280,
-			671088640,
-			335544320,
-			167772160,
-			83886080,
-			33554432,
-			4194304,
-			10485760,
-			5242880,
-			2621440,
-			1310720,
-			655360,
-			327680,
-			131072,
-			16384,
-			40960,
-			20480,
-			10240,
-			5120,
-			2560,
-			1280,
-			512,
-			64,
-			160,
-			80,
-			40,
-			20,
-			10,
-			5,
-			2,
-			0,
-			0,
-			0,
-			0,
-			0,
-			0,
-			0,
-			0
-		};
 		
+		// Additional position info
+		bool isWhitesTurn = false;
+		
+
+		// Push pieces
 		void push(char type) {
 			this->push(1);
 
@@ -449,7 +57,6 @@ namespace litl {
 			if (type == 'k') bk += 1;
 			if (type == 'K') wk += 1;
 		}
-
 		void push(int num) {
 			wp <<= num;
 			bp <<= num;
@@ -465,33 +72,51 @@ namespace litl {
 			bk <<= num;
 		}
 
+
+		// Convert ull number into string
 		string longLongToBinary(long long num, bool doNewLines) {
 			string binary;
 			for (int i = 63; i >= 0; --i) {
-				binary += ((num >> i) & 1) ? '1' : '0';
+				binary += ((num >> i) & 1) ? '1' : '.';
 
 				if (i % 8 == 0 && doNewLines) binary += '\n';
 			}
 			return binary;
 		}
 
+
+		// Combine bitboards
 		ull getBlackBitboard() {
 			return bp | bb | bn | br | bq | bk;
 		}
-
 		ull getWhiteBitboard() {
 			return wp | wb | wn | wr | wq | wk;
 		}
-
 		ull getAllBitboard() {
 			return getBlackBitboard() | getWhiteBitboard();
 		}
 
+
+		// Additional functions
+		char getPieceType(int num) {
+			if (setBitOnEmptyBoard(num) & (wp | bp)) return 'p';
+			if (setBitOnEmptyBoard(num) & (wb | bb)) return 'b';
+			if (setBitOnEmptyBoard(num) & (wn | bn)) return 'n';
+			if (setBitOnEmptyBoard(num) & (wr | br)) return 'r';
+			if (setBitOnEmptyBoard(num) & (wq | bq)) return 'q';
+			if (setBitOnEmptyBoard(num) & (wk | bk)) return 'k';
+
+			return '-';
+		}
+
+
+		// Returns a bitboard with only one piece on given square
 		ull setBitOnEmptyBoard(int num) {
 			return 1LL << (63 - num);
 		}
 
-		// All this functions were used to generate all moves for non sliding pieces
+
+		// All this functions were used to generate possible moves for non sliding pieces
 		std::vector<ull> generateAllKnightMoves() {
 			std::vector<ull> result;
 
@@ -512,7 +137,6 @@ namespace litl {
 
 			return result;
 		}
-
 		std::vector<ull> generateAllKingMoves() {
 			std::vector<ull> result;
 
@@ -533,7 +157,6 @@ namespace litl {
 
 			return result;
 		}
-
 		std::vector<ull> generateAllWhitePawnsMoves() {
 			std::vector<ull> result;
 
@@ -547,7 +170,6 @@ namespace litl {
 
 			return result;
 		}
-
 		std::vector<ull> generateAllBlackPawnsMoves() {
 			std::vector<ull> result;
 
@@ -561,7 +183,6 @@ namespace litl {
 
 			return result;
 		}
-
 		std::vector<ull> generateAllWhitePawnsCaptures() {
 			std::vector<ull> result;
 
@@ -575,7 +196,6 @@ namespace litl {
 
 			return result;
 		}
-
 		std::vector<ull> generateAllBlackPawnsCaptures() {
 			std::vector<ull> result;
 
@@ -590,12 +210,312 @@ namespace litl {
 			return result;
 		}
 
+
+		// Sliding pieces bitboards generation (afaik magic bitboards will be >800 kib which is bigger than esp32 is available to store)
+		ull getRookMovesBitboard(int num, ull pieces) {
+			ull result = 0;
+
+			pieces = setBitOnEmptyBoard(num) ^ pieces;
+
+			ull startingPosition = setBitOnEmptyBoard(num);
+
+			ull down = startingPosition;
+			while (true) {
+				down >>= 8;
+				if (down) result |= down;
+				else break;
+
+				if (down & pieces) break;
+			}
+
+			ull up = startingPosition;
+			while (true) {
+				up <<= 8;
+				if (up) result |= up;
+				else break;
+
+				if (up & pieces) break;
+			}
+
+			ull right = startingPosition;
+			while (true) {
+				right &= ~col_h;
+				right >>= 1;
+
+				if (right) result |= right;
+				else break;
+
+				if (right & pieces) break;
+			}
+
+			ull left = startingPosition;
+			while (true) {
+				left &= ~col_a;
+				left <<= 1;
+
+				if (left) result |= left;
+				else break;
+
+				if (left & pieces) break;
+			}
+
+			return result & ~startingPosition;
+		}
+		ull getBishopMovesBitboard(int num, ull pieces) {
+			ull result = 0;
+
+			pieces = setBitOnEmptyBoard(num) ^ pieces;
+			ull startingPosition = setBitOnEmptyBoard(num);
+
+			ull dl = startingPosition;
+			while (true) {
+				dl &= ~col_a;
+				dl >>= 7;
+
+				if (dl) result |= dl;
+				else break;
+
+				if (dl & pieces) break;
+			}
+
+			ull ul = startingPosition;
+			while (true) {
+				ul &= ~col_a;
+				ul <<= 9;
+
+				if (ul) result |= ul;
+				else break;
+
+				if (ul & pieces) break;
+			}
+
+			ull dr = startingPosition;
+			while (true) {
+				dr &= ~col_h;
+				dr >>= 9;
+
+				if (dr) result |= dr;
+				else break;
+
+				if (dr & pieces) break;
+			}
+
+			ull ur = startingPosition;
+			while (true) {
+				ur &= ~col_h;
+				ur <<= 7;
+
+				if (ur) result |= ur;
+				else break;
+
+				if (ur & pieces) break;
+			}
+
+			return result & ~startingPosition;
+		}
+		ull getQueenMovesBitboard(int num, ull pieces) {
+			return getRookMovesBitboard(num, pieces) | getBishopMovesBitboard(num, pieces);
+		}
+
+
+		// Just a set of functions to get data from premade moves bitboards
 		ull getKnightMovesBitboard(int num) {
 			return knightMoves[num];
 		}
-
 		ull getKingMovesBitboard(int num) {
 			return knightMoves[num];
+		}
+		ull getPawnMovesBitboard(int num, bool isWhite) {
+			if (isWhite) return wpMoves[num];
+			return bpMoves[num];
+		}
+		ull getPawnCapturesBitboard(int num, bool isWhite) {
+			if (isWhite) return wpCaptures[num];
+			return bpCaptures[num];
+		}
+
+
+		// Pieces logic is done here
+		std::vector<litl::move> getRookMoves(int num, bool isWhite) {
+			std::vector<litl::move> result;
+
+			ull teamBitboard = isWhite ? getWhiteBitboard() : getBlackBitboard();
+			ull oppoBitboard = isWhite ? getBlackBitboard() : getWhiteBitboard();
+
+			ull bitboard = getRookMovesBitboard(num, getAllBitboard());
+			bitboard &= ~teamBitboard;
+
+			bool isCapture = false;
+
+			if (bitboard & oppoBitboard) {
+				bitboard &= oppoBitboard;
+				isCapture = true;
+			}
+
+			int i = 0;
+			while (bitboard) {
+				if(bitboard & 1LL) result.push_back(move(num, 63 - i, isCapture));
+
+				bitboard >>= 1;
+				i++;
+			}
+
+			return result;
+		}
+		std::vector<litl::move> getBishopMoves(int num, bool isWhite) {
+			std::vector<litl::move> result;
+
+			ull teamBitboard = isWhite ? getWhiteBitboard() : getBlackBitboard();
+			ull oppoBitboard = isWhite ? getBlackBitboard() : getWhiteBitboard();
+
+			ull bitboard = getBishopMovesBitboard(num, getAllBitboard());
+			bitboard &= ~teamBitboard;
+
+			bool isCapture = false;
+
+			if (bitboard & oppoBitboard) {
+				bitboard &= oppoBitboard;
+				isCapture = true;
+			}
+
+			int i = 0;
+			while (bitboard) {
+				if (bitboard & 1LL) result.push_back(move(num, 63 - i, isCapture));
+
+				bitboard >>= 1;
+				i++;
+			}
+
+			return result;
+		}
+		std::vector<litl::move> getKnightMoves(int num, bool isWhite) {
+			std::vector<litl::move> result;
+
+			ull teamBitboard = isWhite ? getWhiteBitboard() : getBlackBitboard();
+			ull oppoBitboard = isWhite ? getBlackBitboard() : getWhiteBitboard();
+
+			ull bitboard = getKnightMovesBitboard(num);
+			bitboard &= ~teamBitboard;
+
+			bool isCapture = false;
+
+			if (bitboard & oppoBitboard) {
+				bitboard &= oppoBitboard;
+				isCapture = true;
+			}
+
+			int i = 0;
+			while (bitboard) {
+				if (bitboard & 1LL) result.push_back(move(num, 63 - i, isCapture));
+
+				bitboard >>= 1;
+				i++;
+			}
+
+			return result;
+		}
+		std::vector<litl::move> getQueenMoves(int num, bool isWhite) {
+			std::vector<litl::move> result;
+
+			ull teamBitboard = isWhite ? getWhiteBitboard() : getBlackBitboard();
+			ull oppoBitboard = isWhite ? getBlackBitboard() : getWhiteBitboard();
+
+			ull bitboard = getQueenMovesBitboard(num, getAllBitboard());
+			bitboard &= ~teamBitboard;
+
+			bool isCapture = false;
+
+			if (bitboard & oppoBitboard) {
+				bitboard &= oppoBitboard;
+				isCapture = true;
+			}
+
+			int i = 0;
+			while (bitboard) {
+				if (bitboard & 1LL) result.push_back(move(num, 63 - i, isCapture));
+
+				bitboard >>= 1;
+				i++;
+			}
+
+			return result;
+		}
+		std::vector<litl::move> getKingMoves(int num, bool isWhite) {
+			std::vector<litl::move> result;
+
+			ull teamBitboard = isWhite ? getWhiteBitboard() : getBlackBitboard();
+			ull oppoBitboard = isWhite ? getBlackBitboard() : getWhiteBitboard();
+
+			ull bitboard = getKingMovesBitboard(num);
+			bitboard &= ~teamBitboard;
+
+			bool isCapture = false;
+
+			if (bitboard & oppoBitboard) {
+				bitboard &= oppoBitboard;
+				isCapture = true;
+			}
+
+			int i = 0;
+			while (bitboard) {
+				if (bitboard & 1LL) result.push_back(move(num, 63 - i, isCapture));
+
+				bitboard >>= 1;
+				i++;
+			}
+
+			return result;
+		}
+
+
+		// Generate legal move for given position
+		std::vector<litl::move> getLegalMoves() {
+			std::vector<litl::move> result;
+
+			ull self = isWhitesTurn ? getWhiteBitboard() : getBlackBitboard();
+
+			int i = 0;
+			while (self) {
+				if (self & 1LL) {
+					char type = getPieceType(63 - i);
+
+					std::vector<litl::move> temp;
+
+					if (type == 'b') {
+						temp = getBishopMoves(63 - i, isWhitesTurn);
+					} 
+					else if (type == 'n') {
+						temp = getKnightMoves(63 - i, isWhitesTurn);
+					}
+					else if (type == 'r') {
+						temp = getRookMoves(63 - i, isWhitesTurn);
+					}
+					else if (type == 'q') {
+						temp = getQueenMoves(63 - i, isWhitesTurn);
+					}
+					else if (type == 'k') {
+						temp = getKingMoves(63 - i, isWhitesTurn);
+					}
+
+					if (temp.size() == 0) {
+						i++;
+						self >>= 1;
+						continue;
+					}
+
+					if (result.size() == 0) result = temp;
+					else if (result[0].isCapture && temp[0].isCapture) result.insert(result.end(), temp.begin(), temp.end());
+					else if (!result[0].isCapture) {
+						if (temp[0].isCapture) result = temp;
+						else result.insert(result.end(), temp.begin(), temp.end());
+					}
+				}
+
+				i++;
+				self >>= 1;
+			}
+
+			return result;
 		}
 	};
 

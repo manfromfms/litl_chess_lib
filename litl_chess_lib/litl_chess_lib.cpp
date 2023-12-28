@@ -6,14 +6,15 @@
 
 int main()
 {
-	litl::antichess anti = litl::antichess("q3nr1k/4bppp/3p4/rB2nPP1/3BP2P/Np2Q3/1P6/1K1R3R w - - 7 26");
+	litl::antichess anti = litl::antichess("1n2b3/5p1p/8/p7/4p3/8/P1PN2PP/Rr4NR b - - 1 14");
 
 	std::cout << anti.position.longLongToBinary(anti.position.getAllBitboard(), true) << std::endl;
 
-	std::vector<ull> data = anti.position.generateAllBlackPawnsCaptures();
-	for (int i = 0; i < data.size(); i++) {
-		std::cout << data[i] << std::endl;
-	}
+	//std::cout << anti.position.longLongToBinary(anti.position.getQueenMovesBitboard(43, anti.position.getAllBitboard()), true) << std::endl;
+
+	std::cout << "Started to calculate moves" << std::endl;
+	std::cout << anti.getMovesStringFromVector(anti.position.getLegalMoves()) << std::endl;
+	std::cout << "Ended successfuly" << std::endl;
 
 	std::cin.get();
 }

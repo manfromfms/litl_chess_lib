@@ -129,12 +129,14 @@
   <ItemGroup>
     <ClCompile Include="antichess.cpp" />
     <ClCompile Include="litl_chess_lib.cpp" />
+    <ClCompile Include="move.cpp" />
     <ClCompile Include="position.cpp" />
     <ClCompile Include="useful_ull.cpp" />
     <ClCompile Include="utils.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="antichess.h" />
+    <ClInclude Include="move.h" />
     <ClInclude Include="position.h" />
     <ClInclude Include="useful_ull.h" />
     <ClInclude Include="utils.h" />
