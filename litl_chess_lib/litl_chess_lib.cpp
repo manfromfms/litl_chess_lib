@@ -6,7 +6,7 @@
 
 int main()
 {
-	litl::antichess anti = litl::antichess("1n2b3/5p1p/8/p7/4p3/8/P1PN2PP/Rr4NR b - - 1 14");
+	litl::antichess anti = litl::antichess("1n2b3/r4p1p/8/p7/8/2p5/P1PN2PP/R5NR b - - 1 14");
 
 	std::cout << anti.position.longLongToBinary(anti.position.getAllBitboard(), true) << std::endl;
 

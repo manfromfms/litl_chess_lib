@@ -32,7 +32,7 @@ namespace litl {
 
 		
 		// Additional position info
-		bool isWhitesTurn = false;
+		bool isWhitesTurn = true;
 		
 
 		// Push pieces
@@ -466,6 +466,47 @@ namespace litl {
 
 			return result;
 		}
+		std::vector<litl::move> getPawnMoves(int num, bool isWhite) {
+			std::vector<litl::move> result;
+
+			ull any = getAllBitboard();
+
+			ull teamBitboard = isWhite ? getWhiteBitboard() : getBlackBitboard();
+			ull oppoBitboard = isWhite ? getBlackBitboard() : getWhiteBitboard();
+
+			ull moves = getPawnMovesBitboard(num, isWhite);
+			ull captures = getPawnCapturesBitboard(num, isWhite);
+
+			if (moves & any) {
+				moves &= ~row_5;
+				moves &= ~row_4;
+			}
+
+			moves &= ~any;
+
+			if (captures & oppoBitboard) {
+				captures &= oppoBitboard;
+
+				int i = 0;
+				while (captures) {
+					if (captures & 1LL) result.push_back(litl::move(num, 63 - i, true));
+
+					captures >>= 1;
+					i++;
+				}
+			}
+			else {
+				int i = 0;
+				while (moves) {
+					if (moves & 1LL) result.push_back(litl::move(num, 63 - i, false));
+
+					moves >>= 1;
+					i++;
+				}
+			}
+
+			return result;
+		}
 
 
 		// Generate legal move for given position
@@ -496,6 +537,9 @@ namespace litl {
 					else if (type == 'k') {
 						temp = getKingMoves(63 - i, isWhitesTurn);
 					}
+					else if (type == 'p') {
+						temp = getPawnMoves(63 - i, isWhitesTurn);
+					}
 
 					if (temp.size() == 0) {
 						i++;
@@ -522,7 +566,10 @@ namespace litl {
 	static position buildPosition(string fen) {
 		position result;
 
-		for (auto c : fen) {
+		int i = 0;
+		while (true) {
+			char c = fen[i];
+
 			if (isdigit(c)) {
 				int num = c - '0';
 
@@ -537,7 +584,13 @@ namespace litl {
 			else {
 				result.push(c);
 			}
+
+			i++;
 		}
+
+		i += 2;
+
+		result.isWhitesTurn = fen[i] == 'w';
 
 		return result;
 	}
