@@ -127,7 +127,17 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="antichess.cpp" />
     <ClCompile Include="litl_chess_lib.cpp" />
+    <ClCompile Include="position.cpp" />
+    <ClCompile Include="useful_ull.cpp" />
+    <ClCompile Include="utils.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="antichess.h" />
+    <ClInclude Include="position.h" />
+    <ClInclude Include="useful_ull.h" />
+    <ClInclude Include="utils.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
