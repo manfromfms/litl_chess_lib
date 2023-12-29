@@ -33,6 +33,7 @@ namespace litl {
 		
 		// Additional position info
 		bool isWhitesTurn = true;
+		int enPassant = -1;
 		
 
 		// Push pieces
@@ -354,7 +355,7 @@ namespace litl {
 
 			int i = 0;
 			while (bitboard) {
-				if(bitboard & 1LL) result.push_back(move(num, 63 - i, isCapture));
+				if(bitboard & 1LL) result.push_back(move(enPassant, num, 63 - i, isCapture, getPieceType(63 - i)));
 
 				bitboard >>= 1;
 				i++;
@@ -380,7 +381,7 @@ namespace litl {
 
 			int i = 0;
 			while (bitboard) {
-				if (bitboard & 1LL) result.push_back(move(num, 63 - i, isCapture));
+				if (bitboard & 1LL) result.push_back(move(enPassant, num, 63 - i, isCapture, getPieceType(63 - i)));
 
 				bitboard >>= 1;
 				i++;
@@ -406,7 +407,7 @@ namespace litl {
 
 			int i = 0;
 			while (bitboard) {
-				if (bitboard & 1LL) result.push_back(move(num, 63 - i, isCapture));
+				if (bitboard & 1LL) result.push_back(move(enPassant, num, 63 - i, isCapture, getPieceType(63 - i)));
 
 				bitboard >>= 1;
 				i++;
@@ -432,7 +433,7 @@ namespace litl {
 
 			int i = 0;
 			while (bitboard) {
-				if (bitboard & 1LL) result.push_back(move(num, 63 - i, isCapture));
+				if (bitboard & 1LL) result.push_back(move(enPassant, num, 63 - i, isCapture, getPieceType(63 - i)));
 
 				bitboard >>= 1;
 				i++;
@@ -458,7 +459,7 @@ namespace litl {
 
 			int i = 0;
 			while (bitboard) {
-				if (bitboard & 1LL) result.push_back(move(num, 63 - i, isCapture));
+				if (bitboard & 1LL) result.push_back(move(enPassant, num, 63 - i, isCapture, getPieceType(63 - i)));
 
 				bitboard >>= 1;
 				i++;
@@ -473,6 +474,8 @@ namespace litl {
 
 			ull teamBitboard = isWhite ? getWhiteBitboard() : getBlackBitboard();
 			ull oppoBitboard = isWhite ? getBlackBitboard() : getWhiteBitboard();
+
+			if (enPassant >= 0) oppoBitboard | setBitOnEmptyBoard(enPassant);
 
 			ull moves = getPawnMovesBitboard(num, isWhite);
 			ull captures = getPawnCapturesBitboard(num, isWhite);
@@ -489,7 +492,7 @@ namespace litl {
 
 				int i = 0;
 				while (captures) {
-					if (captures & 1LL) result.push_back(litl::move(num, 63 - i, true));
+					if (captures & 1LL) result.push_back(litl::move(enPassant, num, 63 - i, true, getPieceType(63 - i)));
 
 					captures >>= 1;
 					i++;
@@ -498,7 +501,16 @@ namespace litl {
 			else {
 				int i = 0;
 				while (moves) {
-					if (moves & 1LL) result.push_back(litl::move(num, 63 - i, false));
+					if (moves & 1LL) {
+						if (i < 8 || i >= 56) {
+							result.push_back(litl::move(enPassant, num, 63 - i, 'b'));
+							result.push_back(litl::move(enPassant, num, 63 - i, 'n'));
+							result.push_back(litl::move(enPassant, num, 63 - i, 'r'));
+							result.push_back(litl::move(enPassant, num, 63 - i, 'q'));
+							result.push_back(litl::move(enPassant, num, 63 - i, 'k'));
+						}
+						else result.push_back(litl::move(enPassant, num, 63 - i, false, abs(num - 63 + i) == 16 ? (num + 63 - i) / 2 : -1));
+					}
 
 					moves >>= 1;
 					i++;
@@ -561,6 +573,162 @@ namespace litl {
 
 			return result;
 		}
+
+
+		// Move logic goes here
+		void replacePiece(int num, char type, bool isWhite) {
+			if (type == 'p') {
+				wp &= ~setBitOnEmptyBoard(num);
+				bp &= ~setBitOnEmptyBoard(num);
+				wb &= ~setBitOnEmptyBoard(num);
+				bb &= ~setBitOnEmptyBoard(num);
+				wn &= ~setBitOnEmptyBoard(num);
+				bn &= ~setBitOnEmptyBoard(num);
+				wr &= ~setBitOnEmptyBoard(num);
+				br &= ~setBitOnEmptyBoard(num);
+				wq &= ~setBitOnEmptyBoard(num);
+				bq &= ~setBitOnEmptyBoard(num);
+				wk &= ~setBitOnEmptyBoard(num);
+				bk &= ~setBitOnEmptyBoard(num);
+
+				if(isWhite) wp |= setBitOnEmptyBoard(num);
+				else bp |= setBitOnEmptyBoard(num);
+			}
+			else if (type == 'b') {
+				wp &= ~setBitOnEmptyBoard(num);
+				bp &= ~setBitOnEmptyBoard(num);
+				wb &= ~setBitOnEmptyBoard(num);
+				bb &= ~setBitOnEmptyBoard(num);
+				wn &= ~setBitOnEmptyBoard(num);
+				bn &= ~setBitOnEmptyBoard(num);
+				wr &= ~setBitOnEmptyBoard(num);
+				br &= ~setBitOnEmptyBoard(num);
+				wq &= ~setBitOnEmptyBoard(num);
+				bq &= ~setBitOnEmptyBoard(num);
+				wk &= ~setBitOnEmptyBoard(num);
+				bk &= ~setBitOnEmptyBoard(num);
+
+				if (isWhite) wb |= setBitOnEmptyBoard(num);
+				else bb |= setBitOnEmptyBoard(num);
+			}
+			else if (type == 'n') {
+				wp &= ~setBitOnEmptyBoard(num);
+				bp &= ~setBitOnEmptyBoard(num);
+				wb &= ~setBitOnEmptyBoard(num);
+				bb &= ~setBitOnEmptyBoard(num);
+				wn &= ~setBitOnEmptyBoard(num);
+				bn &= ~setBitOnEmptyBoard(num);
+				wr &= ~setBitOnEmptyBoard(num);
+				br &= ~setBitOnEmptyBoard(num);
+				wq &= ~setBitOnEmptyBoard(num);
+				bq &= ~setBitOnEmptyBoard(num);
+				wk &= ~setBitOnEmptyBoard(num);
+				bk &= ~setBitOnEmptyBoard(num);
+
+				if (isWhite) wn |= setBitOnEmptyBoard(num);
+				else bn |= setBitOnEmptyBoard(num);
+			}
+			else if (type == 'r') {
+				wp &= ~setBitOnEmptyBoard(num);
+				bp &= ~setBitOnEmptyBoard(num);
+				wb &= ~setBitOnEmptyBoard(num);
+				bb &= ~setBitOnEmptyBoard(num);
+				wn &= ~setBitOnEmptyBoard(num);
+				bn &= ~setBitOnEmptyBoard(num);
+				wr &= ~setBitOnEmptyBoard(num);
+				br &= ~setBitOnEmptyBoard(num);
+				wq &= ~setBitOnEmptyBoard(num);
+				bq &= ~setBitOnEmptyBoard(num);
+				wk &= ~setBitOnEmptyBoard(num);
+				bk &= ~setBitOnEmptyBoard(num);
+
+				if (isWhite) wr |= setBitOnEmptyBoard(num);
+				else br |= setBitOnEmptyBoard(num);
+			}
+			else if (type == 'q') {
+				wp &= ~setBitOnEmptyBoard(num);
+				bp &= ~setBitOnEmptyBoard(num);
+				wb &= ~setBitOnEmptyBoard(num);
+				bb &= ~setBitOnEmptyBoard(num);
+				wn &= ~setBitOnEmptyBoard(num);
+				bn &= ~setBitOnEmptyBoard(num);
+				wr &= ~setBitOnEmptyBoard(num);
+				br &= ~setBitOnEmptyBoard(num);
+				wq &= ~setBitOnEmptyBoard(num);
+				bq &= ~setBitOnEmptyBoard(num);
+				wk &= ~setBitOnEmptyBoard(num);
+				bk &= ~setBitOnEmptyBoard(num);
+
+				if (isWhite) wq |= setBitOnEmptyBoard(num);
+				else bq |= setBitOnEmptyBoard(num);
+			}
+			else if (type == 'k') {
+				wp &= ~setBitOnEmptyBoard(num);
+				bp &= ~setBitOnEmptyBoard(num);
+				wb &= ~setBitOnEmptyBoard(num);
+				bb &= ~setBitOnEmptyBoard(num);
+				wn &= ~setBitOnEmptyBoard(num);
+				bn &= ~setBitOnEmptyBoard(num);
+				wr &= ~setBitOnEmptyBoard(num);
+				br &= ~setBitOnEmptyBoard(num);
+				wq &= ~setBitOnEmptyBoard(num);
+				bq &= ~setBitOnEmptyBoard(num);
+				wk &= ~setBitOnEmptyBoard(num);
+				bk &= ~setBitOnEmptyBoard(num);
+
+				if (isWhite) wk |= setBitOnEmptyBoard(num);
+				else bk |= setBitOnEmptyBoard(num);
+			}
+			else {
+				wp &= ~setBitOnEmptyBoard(num);
+				bp &= ~setBitOnEmptyBoard(num);
+				wb &= ~setBitOnEmptyBoard(num);
+				bb &= ~setBitOnEmptyBoard(num);
+				wn &= ~setBitOnEmptyBoard(num);
+				bn &= ~setBitOnEmptyBoard(num);
+				wr &= ~setBitOnEmptyBoard(num);
+				br &= ~setBitOnEmptyBoard(num);
+				wq &= ~setBitOnEmptyBoard(num);
+				bq &= ~setBitOnEmptyBoard(num);
+				wk &= ~setBitOnEmptyBoard(num);
+				bk &= ~setBitOnEmptyBoard(num);
+			}
+		}
+		void makeMove(litl::move move) {
+			// Check is move captures en passant pawn
+			if (move.isCapture && move.to == move.oldEnPassantSquare && getPieceType(move.from) == 'p') {
+				int pawn = move.to + (isWhitesTurn ? - 8 : 8);
+
+				replacePiece(pawn, '-', false);
+			}
+
+			// Place a piece on a new square
+			replacePiece(move.to, move.isPromotion ? move.promotionTo : getPieceType(move.from), isWhitesTurn);
+			// Remove piece from previous square
+			replacePiece(move.from, '-', false);
+
+			// Change turn
+			isWhitesTurn = !isWhitesTurn;
+		}
+		void undoMove(litl::move move) {
+			// Change turn back
+			isWhitesTurn = !isWhitesTurn;
+
+			// Check if move was an en passant one
+			if (move.isCapture && move.to == move.oldEnPassantSquare && getPieceType(move.from) == 'p') {
+				int pawn = move.to + (isWhitesTurn ? -8 : 8);
+
+				replacePiece(pawn, 'p', !isWhitesTurn);
+			}
+			
+			// Place piece back
+			replacePiece(move.from, move.isPromotion ? 'p' : getPieceType(move.to), isWhitesTurn);
+			// Place captured piece back
+			replacePiece(move.to, move.capturedPiece, !isWhitesTurn);
+
+			// Return to older en passant square
+			enPassant = move.oldEnPassantSquare;
+		}
 	};
 
 	static position buildPosition(string fen) {
@@ -588,7 +756,7 @@ namespace litl {
 			i++;
 		}
 
-		i += 2;
+		i += 1;
 
 		result.isWhitesTurn = fen[i] == 'w';
 
