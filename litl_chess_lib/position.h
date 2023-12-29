@@ -324,7 +324,7 @@ namespace litl {
 			return knightMoves[num];
 		}
 		ull getKingMovesBitboard(int num) {
-			return knightMoves[num];
+			return kingMoves[num];
 		}
 		ull getPawnMovesBitboard(int num, bool isWhite) {
 			if (isWhite) return wpMoves[num];
@@ -572,6 +572,48 @@ namespace litl {
 			}
 
 			return result;
+		}
+		bool checkIfHasToCapture() {
+			std::vector<litl::move> result;
+
+			ull self = isWhitesTurn ? getWhiteBitboard() : getBlackBitboard();
+
+			int i = 0;
+			while (self) {
+				if (self & 1LL) {
+					char type = getPieceType(63 - i);
+
+					std::vector<litl::move> temp;
+
+					if (type == 'b') {
+						temp = getBishopMoves(63 - i, isWhitesTurn);
+					}
+					else if (type == 'n') {
+						temp = getKnightMoves(63 - i, isWhitesTurn);
+					}
+					else if (type == 'r') {
+						temp = getRookMoves(63 - i, isWhitesTurn);
+					}
+					else if (type == 'q') {
+						temp = getQueenMoves(63 - i, isWhitesTurn);
+					}
+					else if (type == 'k') {
+						temp = getKingMoves(63 - i, isWhitesTurn);
+					}
+					else if (type == 'p') {
+						temp = getPawnMoves(63 - i, isWhitesTurn);
+					}
+
+					if (temp.size() == 0) continue;
+
+					if (temp[0].isCapture) return true;
+				}
+
+				i++;
+				self >>= 1;
+			}
+
+			return false;
 		}
 
 
