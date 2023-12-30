@@ -6,6 +6,8 @@
 #include "move.h"
 
 #include <vector>
+#include <sstream>
+#include <string>
 
 #include <string>
 using std::string;
@@ -34,6 +36,11 @@ namespace litl {
 		// Additional position info
 		bool isWhitesTurn = true;
 		int enPassant = -1;
+		int moveNumber = 0;
+
+
+		// Useful stuff
+		ull counter = 0;
 		
 
 		// Push pieces
@@ -106,6 +113,22 @@ namespace litl {
 			if (setBitOnEmptyBoard(num) & (wr | br)) return 'r';
 			if (setBitOnEmptyBoard(num) & (wq | bq)) return 'q';
 			if (setBitOnEmptyBoard(num) & (wk | bk)) return 'k';
+
+			return '-';
+		}
+		char getFullPieceType(int num) {
+			if (setBitOnEmptyBoard(num) & (bp)) return 'p';
+			if (setBitOnEmptyBoard(num) & (bb)) return 'b';
+			if (setBitOnEmptyBoard(num) & (bn)) return 'n';
+			if (setBitOnEmptyBoard(num) & (br)) return 'r';
+			if (setBitOnEmptyBoard(num) & (bq)) return 'q';
+			if (setBitOnEmptyBoard(num) & (bk)) return 'k';
+			if (setBitOnEmptyBoard(num) & (wp)) return 'P';
+			if (setBitOnEmptyBoard(num) & (wb)) return 'B';
+			if (setBitOnEmptyBoard(num) & (wn)) return 'N';
+			if (setBitOnEmptyBoard(num) & (wr)) return 'R';
+			if (setBitOnEmptyBoard(num) & (wq)) return 'Q';
+			if (setBitOnEmptyBoard(num) & (wk)) return 'K';
 
 			return '-';
 		}
@@ -475,7 +498,7 @@ namespace litl {
 			ull teamBitboard = isWhite ? getWhiteBitboard() : getBlackBitboard();
 			ull oppoBitboard = isWhite ? getBlackBitboard() : getWhiteBitboard();
 
-			if (enPassant >= 0) oppoBitboard | setBitOnEmptyBoard(enPassant);
+			if (enPassant >= 0) oppoBitboard |= setBitOnEmptyBoard(enPassant);
 
 			ull moves = getPawnMovesBitboard(num, isWhite);
 			ull captures = getPawnCapturesBitboard(num, isWhite);
@@ -604,7 +627,11 @@ namespace litl {
 						temp = getPawnMoves(63 - i, isWhitesTurn);
 					}
 
-					if (temp.size() == 0) continue;
+					if (temp.size() == 0) {
+						i++;
+						self >>= 1;
+						continue;
+					}
 
 					if (temp[0].isCapture) return true;
 				}
@@ -737,6 +764,9 @@ namespace litl {
 			}
 		}
 		void makeMove(litl::move move) {
+			counter++;
+			moveNumber++;
+
 			// Check is move captures en passant pawn
 			if (move.isCapture && move.to == move.oldEnPassantSquare && getPieceType(move.from) == 'p') {
 				int pawn = move.to + (isWhitesTurn ? - 8 : 8);
@@ -753,6 +783,8 @@ namespace litl {
 			isWhitesTurn = !isWhitesTurn;
 		}
 		void undoMove(litl::move move) {
+			moveNumber--;
+
 			// Change turn back
 			isWhitesTurn = !isWhitesTurn;
 
@@ -771,10 +803,31 @@ namespace litl {
 			// Return to older en passant square
 			enPassant = move.oldEnPassantSquare;
 		}
+		void clearPositions() {
+			counter = 0;
+		}
+		void changeTurn() {
+			isWhitesTurn = !isWhitesTurn;
+		}
 	};
 
+
+	// Convert fen to vector
+	static std::vector<std::string> splitString(const std::string& str) {
+		std::istringstream iss(str);
+		std::vector<std::string> result;
+		for (std::string s; iss >> s; )
+			result.push_back(s);
+		return result;
+	}
+
+
+	// Generate position from fen string (no error handler yet)
 	static position buildPosition(string fen) {
 		position result;
+
+		std::vector<string> params = splitString(fen);
+		if (params.size() != 6) return result;
 
 		int i = 0;
 		while (true) {
@@ -798,9 +851,10 @@ namespace litl {
 			i++;
 		}
 
-		i += 1;
 
-		result.isWhitesTurn = fen[i] == 'w';
+		result.isWhitesTurn = params[1] == "w";
+		result.moveNumber = 2 * std::stoi(params[5]) - (result.isWhitesTurn ? 2 : 1);
+		
 
 		return result;
 	}

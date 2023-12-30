@@ -20,6 +20,8 @@ namespace litl {
 
 		int oldEnPassantSquare = -1;
 
+		int order = 0;
+
 		move() {
 
 		}
